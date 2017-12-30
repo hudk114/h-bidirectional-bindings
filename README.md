@@ -1,2 +1,4 @@
-# h-bidirectional-bindings
-the simple way to implement bidirectional binding
+# introduce
+a very very simple implement of bidirectional binding
+
+# update
