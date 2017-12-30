@@ -1,15 +1,19 @@
 const bind = require('../bind');
 
-let val = 0;
+let obj = {
+  val: 3,
+}
+
+let x = bind.bind(obj)
 
 window.onload = function () {
-  init();
-};
+  init()
+}
 
+// TODO to loader
 function init() {
-  document.getElementById('test').value = bind.bind(val);
+  document.getElementById('test').value = x.val;
   document.getElementById('test').addEventListener('input', e => {
-    console.log(e.target);
-    console.log(e.target.value);
+    x.val = e.target.value;
   })
 };
