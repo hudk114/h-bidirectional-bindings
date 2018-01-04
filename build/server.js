@@ -1,5 +1,5 @@
 const webpack = require('webpack')
-const webpackConfig = require('../webpack.config')
+const webpackConfig = require('./webpack.config')
 const express = require('express')
 var app = express()
 
@@ -22,7 +22,9 @@ app.use(hotMiddleware)
 complier.plugin('compilation', compilation => {
   console.log('compilation')
   compilation.plugin('html-webpack-plugin-after-emit', (data, cb) => {
-    hotMiddleware.publish({ action: 'reload' })
+    hotMiddleware.publish({
+      action: 'reload'
+    })
     cb();
   })
 })

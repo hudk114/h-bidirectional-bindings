@@ -1,6 +1,9 @@
 const bind = require('../bind')
 
-let obj = {
+var obj = {
+  attr: {
+    a: 1
+  },
   val: 3
 }
 
