@@ -1,108 +1,61 @@
-window.hm = {}
+window.hm = {};
 
-// let index = 0;
+const isObj = function isObj(val) {
+  return typeof val === 'object';
+};
 
-const common = {
-  // TODO
-  isObject (val) {
-    if (Array.isArray(val)) {
-      return false
-    }
-    return val instanceof Object
+const setProxy = function setProxy(val) {
+  console.log(val);
+};
+const getProxy = function getProxy() {
+  console.log('get sth here');
+};
+
+const hijackProperty = function hijackProperty(obj, key, val) {
+  // TODO the property can't be config?
+  Object.defineProperty(obj, key, {
+    configurable: false,
+    get() {
+      getProxy();
+      return val;
+    },
+    set(nVal) {
+      setProxy(nVal);
+      val = nVal; // eslint-disable-line
+    },
+  });
+};
+
+const hijackObj = function hijackObj(obj) {
+  if (isObj(obj)) {
+    Object.keys(obj).forEach((key) => {
+      // if hijack property first, would trigger get several times
+      if (isObj(obj[key])) {
+        hijackObj(obj[key]);
+      }
+      hijackProperty(obj, key, obj[key]);
+    });
+  } else {
+    // TODO
   }
-}
+};
 
-const bindFuncs = {
-  setProxy (val) {
-    console.log(val)
-  },
-  getProxy () {
-    console.log('get sth here')
-  },
-  bindProperty (rawObj, key, tarObj = window.hm) {
-    Object.defineProperty(tarObj, key, {
-      set (val) {
-        bindFuncs.setProxy(val)
-        // TODO dom here
-        rawObj[key] = val
-      },
-      get () {
-        bindFuncs.getProxy()
-        return rawObj[key]
-      }
-    })
-  },
-  bindObj (rawObj, key, tarObj = window.hm) {
-    // FIXME first bind toObj.key then bind rawObj to toObj.key
-
-    const obj = rawObj[key]
-    // const tObj = tarObj[key]
-    // FIXME then bind rawObj[key] to toObj
-    for (const k in obj) {
-      if (obj.hasOwnProperty(k)) {
-        // TODO
-        const ele = obj[k]
-        if (common.isObject(ele)) {
-          // bindFuncs.bindObj(obj, k, tObj)
-        } else {
-          // TODO array?
-          // bindFuncs.bindAttr(obj, k, tObj)
-          Object.defineProperty(tarObj[key], k, {
-            set (val) {
-              obj[k] = val
-            },
-            get () {
-              return obj[k]
-            }
-          })
-        }
-      }
-    }
-    bindFuncs.bindAttr(rawObj, key, tarObj)
-  },
-  bind (obj) {
-    // bind to window.hm
-
-    // property hijacking
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        const ele = obj[key]
-        if (common.isObject(ele)) {
-          bindFuncs.bindObj(obj, key)
-        } else {
-          // TODO array?
-          bindFuncs.bindProperty(obj, key)
-        }
-      }
-    }
-    return window.hm
-  },
-  observe (data) {
-    if (typeof data !== 'object') {
-      return
-    }
-
-    Object.keys(data).forEach(key => {
-      bindFuncs.defineReactive(data, key, data[key])
-    })
-  },
-  defineReactive (data, key, val = data[key]) {
-    // TODO 最外层绑定一次
-    // bind()
-    console.log('1')
-    bindFuncs.observe(val)
-    Object.defineProperty(data, key, {
-      enumerable: true,
+const bind = function bind(obj) {
+  // bind to window.hm
+  Object.keys(obj).forEach((key) => {
+    Object.defineProperty(window.hm, key, {
       configurable: false,
-      get () {
-        return val
+      get() {
+        return obj[key];
       },
-      set (nVal) {
-        console.log('set')
-        val = nVal
-      }
-    })
-  }
-}
+      set(nVal) {
+        obj[key] = nVal; // eslint-disable-line
+      },
+    });
+  });
 
-module.exports = bindFuncs
+  // property hijacking
+  hijackObj(obj);
+};
+
+module.exports = bind;

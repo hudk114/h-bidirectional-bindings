@@ -1,22 +1,23 @@
-const bind = require('../bind')
+const bind = require('../bind');
 
-var obj = {
+const obj = {
   attr: {
-    a: 1
+    a: 1,
   },
-  val: 3
-}
+  arr: [1, 2, 3],
+  val: 3,
+};
 
-let x = bind.bind(obj)
-
-window.onload = function () {
-  init()
-}
+bind(obj);
 
 // TODO to loader
-function init () {
-  document.getElementById('test').value = x.val
-  document.getElementById('test').addEventListener('input', e => {
-    x.val = e.target.value
-  })
-}
+const init = function init() {
+  document.getElementById('test').value = obj.val;
+  document.getElementById('test').addEventListener('input', (e) => {
+    obj.val = e.target.value;
+  });
+};
+
+window.onload = () => {
+  init();
+};
