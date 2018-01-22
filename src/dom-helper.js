@@ -1,11 +1,11 @@
-const getDom = (function getDom (ele, cb) {
+const getDom = function getDom (ele, cb) {
   const judgeCB = typeof cb === 'function' ? cb : null
   // TODO iterator here
   if (!ele.childNodes) {
     return []
   }
 
-  const childNodes = ele.childNodes;
+  const childNodes = ele.childNodes
   // the last
   if (childNodes.length === 0) {
     if (judgeCB && !judgeCB(ele)) {
@@ -21,14 +21,14 @@ const getDom = (function getDom (ele, cb) {
     Array.prototype.push.apply(arr, getDom(e, cb))
   }
   return arr
-})
+}
 
 const getDomByType = function getDomByType (type) {
   return getDom(document.body, (ele) => ele.nodeType === type)
 }
 
 const exec = function exec () {
-  const judgeValue = function judgeValue(val) {
+  const judgeValue = function judgeValue (val) {
     return /^\{\{.*\}\}$/.test(val)
   }
   const getValue = function getValue (val) {
