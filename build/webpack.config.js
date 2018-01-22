@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
   entry: {
     app: [
-      __dirname + '/../src/index.js',
+      __dirname + '/../test/index.js',
       __dirname + '/../build/client.js'
     ]
   },
@@ -30,7 +30,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'My App',
       filename: 'index.html',
-      template: __dirname + '/../src/index.tmpl.html'
+      template: __dirname + '/../test/index.tmpl.html'
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()

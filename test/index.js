@@ -1,4 +1,5 @@
-const bind = require('../bind');
+import bind from '../src/hijack-bind'
+import exec from '../src/dom-helper'
 
 const obj = {
   attr: {
@@ -21,3 +22,6 @@ const init = function init() {
 window.onload = () => {
   init();
 };
+
+window.tm = exec()
+console.log(window.tm)
