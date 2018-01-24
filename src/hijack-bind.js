@@ -1,4 +1,9 @@
+import Model from './model'
+
+const domModel = new Model()
+
 window.hm = {}
+window.hm.dm = domModel
 
 const isObj = function isObj (val) {
   if (val === null) {
@@ -9,9 +14,10 @@ const isObj = function isObj (val) {
 
 const setProxy = function setProxy (val) {
   console.log(val)
+  domModel.trigger('val-change', val)
 }
 const getProxy = function getProxy () {
-  console.log('get sth here')
+  // console.log('get sth here')
 }
 
 /**

@@ -1,5 +1,6 @@
 import bind from '../src/hijack-bind'
 import exec from '../src/dom-helper'
+import Model from '../src/model'
 
 const obj = {
   attr: {
@@ -25,3 +26,8 @@ window.onload = () => {
 
 window.tm = exec()
 console.log(window.tm)
+
+hm.dm.on('val-change', (val) => {
+  window.tm[0].ele.nodeValue = val
+})
+
