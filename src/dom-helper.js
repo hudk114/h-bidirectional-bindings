@@ -46,4 +46,29 @@ const exec = function exec () {
   return textDom
 }
 
-export default exec
+const transElement = function transElement (ele) {
+  const pattern = /\{\{(.*)\}\}/
+  const childNodes = ele.childNodes
+
+  Array.from(childNodes).forEach((node) => {
+    if (node.nodeType === 3 && pattern.test(node.nodeValue)) {
+      // TODO 只有一层
+      const text = pattern.exec(node.nodeValue)
+      window.hm.target = (val) => {
+        node.nodeValue = val
+      }
+      node.nodeValue = window.hm[text[1]]
+      window.hm.target = null
+      return
+    }
+
+    if (node.childNodes && node.childNodes.length) {
+      transElement(node)
+    }
+  })
+}
+
+export default {
+  exec,
+  transElement
+}

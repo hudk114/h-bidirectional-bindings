@@ -25,7 +25,6 @@ Event.prototype = {
         if (e.trigger) {
         } else {
           e.cb.apply(e, rest)
-          // e.cb()
           e.trigger = true
         }
       } else {

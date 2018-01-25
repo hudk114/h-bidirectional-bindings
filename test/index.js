@@ -1,5 +1,10 @@
 import bind from '../src/hijack-bind'
-import exec from '../src/dom-helper'
+import ttt from '../src/dom-helper'
+// TODO why not work
+// import {
+//   exec,
+//   transElement
+// } from '../src/dom-helper'
 import Model from '../src/model'
 
 const obj = {
@@ -24,10 +29,19 @@ window.onload = () => {
   init();
 };
 
-window.tm = exec()
-console.log(window.tm)
+// TODO 根据值找到对应的数据
+window.tm = ttt.exec()
 
-hm.dm.on('val-change', (val) => {
-  window.tm[0].ele.nodeValue = val
-})
+ttt.transElement(document.body)
 
+// hm.target = (val) => {
+//   window.tm[0].ele.nodeValue = val
+// }
+// window.tm[0].ele.nodeValue = hm.val
+// hm.target = null
+
+// hm.target = (val) => {
+//   window.tm[1].ele.nodeValue = val
+// }
+// window.tm[1].ele.nodeValue = hm.attr.a
+// hm.target = null

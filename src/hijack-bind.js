@@ -12,14 +12,6 @@ const isObj = function isObj (val) {
   return typeof val === 'object'
 }
 
-const setProxy = function setProxy (val) {
-  console.log(val)
-  domModel.trigger('val-change', val)
-}
-const getProxy = function getProxy () {
-  // console.log('get sth here')
-}
-
 /**
  * hijack property key of obj
  * @param {Object} obj the obj to be hijcked
@@ -27,15 +19,21 @@ const getProxy = function getProxy () {
  * @param {*} val actually the obj[key], cause hijack would overwrite obj[key]
  */
 const hijackProperty = function hijackProperty (obj, key, val) {
+  // 每一个property都有一个model
+  const model = new Model()
+
   // TODO the property can't be config?
   Object.defineProperty(obj, key, {
     configurable: false,
     get () {
-      getProxy()
+      // 利用全局变量传递cb进来
+      if (window.hm.target) {
+        model.on('val-change', window.hm.target)
+      }
       return val
     },
     set (nVal) {
-      setProxy(nVal)
+      model.trigger('val-change', nVal)
       val = nVal; // eslint-disable-line
     }
   })
