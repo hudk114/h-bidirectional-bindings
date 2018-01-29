@@ -46,18 +46,49 @@ const exec = function exec () {
   return textDom
 }
 
+const convertProp = function convertProp (val) {
+  return val.trim().split('.')
+}
+
+const getDepthProps = function getDepthProps (obj, props) {
+  // TODO
+  if (props.length <= 1) {
+    return {
+      obj,
+      prop: props[0]
+    }
+  }
+
+  let o = obj
+  let key = null
+  while (props.length > 1) {
+    key = props.shift()
+    o = o[key]
+  }
+
+  return {
+    obj: o,
+    prop: props[0]
+  }
+}
+
 const transElement = function transElement (ele) {
   const pattern = /\{\{(.*)\}\}/
   const childNodes = ele.childNodes
 
   Array.from(childNodes).forEach((node) => {
     if (node.nodeType === 3 && pattern.test(node.nodeValue)) {
-      // TODO 只有一层
-      const text = pattern.exec(node.nodeValue)
+      // TODO 没有处理算术
+      // TODO 只有一个绑定值
+      const match = pattern.exec(node.nodeValue)
+      const rawVal = node.nodeValue
+      const props = convertProp(match[1])
+      // get proper obj and prop
+      const o = getDepthProps(window.hm, props)
       window.hm.target = (val) => {
-        node.nodeValue = val
+        node.nodeValue = rawVal.replace(pattern, val)
       }
-      node.nodeValue = window.hm[text[1]]
+      node.nodeValue = rawVal.replace(pattern, o.obj[o.prop])
       window.hm.target = null
       return
     }
@@ -69,6 +100,6 @@ const transElement = function transElement (ele) {
 }
 
 export default {
-  exec,
+  // exec,
   transElement
 }
