@@ -1,5 +1,6 @@
 import bind from '../src/hijack-bind'
-import ttt from '../src/dom-helper'
+// import exec from '../src/dom-helper'
+import compile from '../src/compile'
 
 const obj = {
   attr: {
@@ -24,6 +25,6 @@ window.onload = () => {
 }
 
 // TODO 根据值找到对应的数据
-// window.tm = ttt.exec()
+// window.tm = exec()
 
-ttt.transElement(document.body)
+compile(document.body)
