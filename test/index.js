@@ -12,18 +12,6 @@ const obj = {
 
 bind(obj)
 
-// TODO to loader
-const init = function init () {
-  document.getElementById('test').value = obj.val
-  document.getElementById('test').addEventListener('input', (e) => {
-    obj.val = e.target.value
-  })
-}
-
-window.onload = () => {
-  init()
-}
-
 // TODO 根据值找到对应的数据
 // window.tm = exec()
 

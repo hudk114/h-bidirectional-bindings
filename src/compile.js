@@ -1,5 +1,3 @@
-import { debug } from "util";
-
 const convertProp = function convertProp (val) {
   return val.trim().split('.')
 }
@@ -29,7 +27,7 @@ const getDepthProps = function getDepthProps (obj, props) {
 const transEleToFragment = function transEleToFragment (ele) {
   const fragment = document.createDocumentFragment()
 
-  Array.from(ele.childNodes).forEach(node => {
+  Array.from(ele.childNodes).forEach((node) => {
     fragment.appendChild(node)
   })
   // let child = ele.firstChild
@@ -40,39 +38,81 @@ const transEleToFragment = function transEleToFragment (ele) {
   return fragment
 }
 
-const compileText = function compileText (ele) {
-  const pattern = /\{\{(.*)\}\}/
-  const childNodes = ele.childNodes
+const compileEleNode = function compileEleNode (node) {
+  if (!node.attributes) {
+    return
+  }
 
-  Array.from(childNodes).forEach((node) => {
-    if (node.nodeType === 3 && pattern.test(node.nodeValue)) {
-      // TODO 没有处理算术
-      // TODO 只有一个绑定值
-      const match = pattern.exec(node.nodeValue)
-      const rawVal = node.nodeValue
-      const props = convertProp(match[1])
+  const pattern = /^h-(.*)$/
+  Array.from(node.attributes).forEach((attr) => {
+    const name = attr.name
+    const match = pattern.exec(name)
+    if (match && match[1] === 'model') {
+      const props = convertProp(attr.value)
       // get proper obj and prop
       const o = getDepthProps(window.hm, props)
+
+      // bind to watcher here
       window.hm.target = (val) => {
-        node.nodeValue = rawVal.replace(pattern, val)
+        node.value = val
       }
-      node.nodeValue = rawVal.replace(pattern, o.obj[o.prop])
+      node.value = o.obj[o.prop]
       window.hm.target = null
+
+      node.addEventListener('input', (e) => {
+        o.obj[o.prop] = e.target.value
+      })
+    }
+  })
+}
+
+const compileTextNode = function compileTextNode (node) {
+  // TODO 只有一个绑定值
+  // TODO 没有处理算术
+
+  const pattern = /\{\{(.*)\}\}/
+  const match = pattern.exec(node.nodeValue)
+  if (!match) {
+    return
+  }
+
+  const rawVal = node.nodeValue
+  const props = convertProp(match[1])
+  // get proper obj and prop
+  const o = getDepthProps(window.hm, props)
+
+  // bind to watcher here
+  window.hm.target = (val) => {
+    node.nodeValue = rawVal.replace(pattern, val)
+  }
+  node.nodeValue = rawVal.replace(pattern, o.obj[o.prop])
+  window.hm.target = null
+}
+
+const compileNode = function compileNode (ele) {
+  Array.from(ele.childNodes).forEach((node) => {
+    // text node
+    if (node.nodeType === 3) {
+      compileTextNode(node)
       return
+    } else {
+      compileEleNode(node)
     }
 
     if (node.childNodes && node.childNodes.length) {
-      compileText(node)
+      compileNode(node)
     }
   })
 }
 
 const compile = function compile (ele) {
-  // TODO judge ele
+  if (!ele) {
+    return
+  }
 
   let fragment = transEleToFragment(ele)
 
-  compileText(fragment)
+  compileNode(fragment)
 
   ele.appendChild(fragment)
 }
