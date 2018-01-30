@@ -34,7 +34,7 @@ const hijackProperty = function hijackProperty (obj, key, val) {
     },
     set (nVal) {
       model.trigger('val-change', nVal)
-      val = nVal; // eslint-disable-line
+      val = nVal // eslint-disable-line
     }
   })
 }
